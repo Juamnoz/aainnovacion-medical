@@ -90,14 +90,14 @@ export function AboutSection() {
           >
             {/* AMWC Badge */}
             <div className="inline-flex items-center gap-3 px-4 py-3 rounded-2xl border border-yellow-300 bg-yellow-50">
-              <div className="w-10 h-10 flex-shrink-0">
+              <div className="w-10 h-10 flex-shrink-0 rounded-full overflow-hidden bg-white shadow-sm">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/images/sello-amwc.png"
                   alt="Sello AMWC"
                   width={40}
                   height={40}
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover"
                 />
               </div>
               <div>
