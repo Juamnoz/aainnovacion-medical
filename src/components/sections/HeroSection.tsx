@@ -29,7 +29,7 @@ export function HeroSection() {
             width: 'max(100%, calc(100vh * 16/9))',
             height: 'max(100%, calc(100vw * 9/16))',
             border: 'none',
-            opacity: 0.5,
+            opacity: 0.7,
           }}
           title="background"
         />

@@ -19,7 +19,15 @@ export function VideoScrollSection() {
     const video = videoRef.current
     if (!video) return
 
-    // Lerp factor: 0.08 = suave como Apple, 0.2 = más reactivo
+    const isMobile = window.matchMedia('(max-width: 768px)').matches || 'ontouchstart' in window
+
+    if (isMobile) {
+      // Móvil: simplemente reproducir con autoplay nativo
+      video.play().catch(() => {})
+      return
+    }
+
+    // Desktop: scroll scrubbing
     const LERP = 0.08
 
     const tick = () => {
@@ -71,7 +79,9 @@ export function VideoScrollSection() {
           ref={videoRef}
           src="/video.mp4"
           playsInline
+          autoPlay
           muted
+          loop
           preload="auto"
           className="absolute inset-0 w-full h-full object-cover"
         />

@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion'
 import { Shield, Award, MapPin, Zap } from 'lucide-react'
-import Image from 'next/image'
 
 const stats = [
   { value: '+1000', label: 'Productos en catálogo' },
@@ -91,12 +90,14 @@ export function AboutSection() {
           >
             {/* AMWC Badge */}
             <div className="inline-flex items-center gap-3 px-4 py-3 rounded-2xl border border-yellow-300 bg-yellow-50">
-              <div className="relative w-10 h-10 flex-shrink-0">
-                <Image
+              <div className="w-10 h-10 flex-shrink-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src="/images/sello-amwc.png"
                   alt="Sello AMWC"
-                  fill
-                  className="object-contain"
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-contain"
                 />
               </div>
               <div>
