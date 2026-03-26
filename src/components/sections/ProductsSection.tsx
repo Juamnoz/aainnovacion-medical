@@ -162,7 +162,7 @@ function QuickView({ product, onClose }: { product: Product; onClose: () => void
                   src={product.images[activeImg]}
                   alt={product.title}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   sizes="(max-width: 768px) 100vw, 60vw"
                   priority
                 />
