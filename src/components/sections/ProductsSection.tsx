@@ -21,6 +21,7 @@ const products: Product[] = [
       '/images/products/canulas-3.png',
       '/images/products/canulas-4.png',
       '/images/products/canulas-5.png',
+      '/images/products/canulas-6.png',
     ],
     tag: 'Best Seller',
   },
