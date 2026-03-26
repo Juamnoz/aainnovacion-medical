@@ -1,8 +1,8 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 interface Product {
   title: string
@@ -93,13 +93,194 @@ const cardVariants = {
   },
 }
 
-function ProductCard({ product }: { product: Product }) {
+/* ── Quick View Modal ── */
+function QuickView({ product, onClose }: { product: Product; onClose: () => void }) {
+  const [activeImg, setActiveImg] = useState(0)
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowRight') setActiveImg((p) => (p + 1) % product.images.length)
+      if (e.key === 'ArrowLeft') setActiveImg((p) => (p - 1 + product.images.length) % product.images.length)
+    },
+    [onClose, product.images.length],
+  )
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [handleKeyDown])
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8"
+      onClick={onClose}
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-blue-950/60 backdrop-blur-sm" />
+
+      {/* Modal */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92, y: 30 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.92, y: 30 }}
+        transition={{ type: 'spring', damping: 28, stiffness: 350 }}
+        onClick={(e) => e.stopPropagation()}
+        className="relative z-10 bg-white rounded-3xl shadow-2xl shadow-blue-900/20 overflow-hidden max-w-4xl w-full max-h-[90vh] flex flex-col sm:flex-row"
+      >
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm border border-blue-100 flex items-center justify-center text-blue-800 hover:bg-blue-50 transition-colors shadow-sm"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M4 4l8 8M12 4l-8 8" />
+          </svg>
+        </button>
+
+        {/* Image side */}
+        <div className="relative sm:w-3/5 bg-blue-50 flex-shrink-0">
+          <div className="relative w-full" style={{ aspectRatio: '4/3' }}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeImg}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.25 }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src={product.images[activeImg]}
+                  alt={product.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 60vw"
+                  priority
+                />
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Nav arrows */}
+            {product.images.length > 1 && (
+              <>
+                <button
+                  onClick={() => setActiveImg((p) => (p - 1 + product.images.length) % product.images.length)}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center text-blue-800 hover:bg-white transition-colors shadow-md"
+                >
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M11 4l-5 5 5 5" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => setActiveImg((p) => (p + 1) % product.images.length)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center text-blue-800 hover:bg-white transition-colors shadow-md"
+                >
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M7 4l5 5-5 5" />
+                  </svg>
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Thumbnails */}
+          {product.images.length > 1 && (
+            <div className="flex gap-2 p-4 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+              {product.images.map((img, i) => (
+                <motion.button
+                  key={img}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setActiveImg(i)}
+                  className={`relative h-16 w-20 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all ${
+                    i === activeImg ? 'border-blue-600 shadow-md' : 'border-transparent opacity-50 hover:opacity-100'
+                  }`}
+                >
+                  <Image src={img} alt={`${product.title} ${i + 1}`} fill className="object-cover" sizes="80px" />
+                </motion.button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Info side */}
+        <div className="p-8 sm:w-2/5 flex flex-col justify-center">
+          <motion.span
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-[10px] tracking-[0.2em] uppercase px-3 py-1 rounded-full bg-blue-100 text-blue-700 w-fit mb-4"
+          >
+            {product.tag}
+          </motion.span>
+          <motion.h3
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="text-2xl font-bold text-blue-950 mb-3"
+          >
+            {product.title}
+          </motion.h3>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-sm text-blue-800/60 leading-relaxed mb-6"
+          >
+            {product.description}
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="flex flex-col gap-3"
+          >
+            <a
+              href="#contacto"
+              onClick={onClose}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-blue-700 text-white text-sm hover:bg-blue-800 transition-colors tracking-wide shadow-lg shadow-blue-700/25"
+            >
+              Solicitar Cotizacion
+            </a>
+            <a
+              href="https://wa.me/573001234567"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-blue-200 text-blue-700 text-sm hover:bg-blue-50 transition-colors tracking-wide"
+            >
+              Consultar por WhatsApp
+            </a>
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.35 }}
+            className="text-[11px] text-blue-400 mt-6"
+          >
+            {product.images.length} fotos disponibles · Usa las flechas para navegar
+          </motion.p>
+        </div>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+function ProductCard({ product, onQuickView }: { product: Product; onQuickView: () => void }) {
   const [activeImg, setActiveImg] = useState(0)
   const hasGallery = product.images.length > 1
 
   return (
     <>
-      <div className="relative h-56 overflow-hidden bg-blue-50">
+      <div className="relative h-56 overflow-hidden bg-blue-50 cursor-pointer" onClick={onQuickView}>
         <Image
           src={product.images[activeImg]}
           alt={product.title}
@@ -111,6 +292,16 @@ function ProductCard({ product }: { product: Product }) {
         <span className="absolute top-4 left-4 text-[10px] tracking-[0.2em] uppercase px-3 py-1 rounded-full bg-blue-700/90 text-white backdrop-blur-sm">
           {product.tag}
         </span>
+        {/* Quick view hint */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileHover={{ opacity: 1 }}
+          className="absolute inset-0 flex items-center justify-center bg-blue-950/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        >
+          <span className="px-4 py-2 rounded-full bg-white/90 backdrop-blur-sm text-xs font-medium text-blue-800 shadow-lg">
+            Ver detalle
+          </span>
+        </motion.div>
       </div>
       {hasGallery && (
         <div className="flex gap-1.5 px-6 pt-3">
@@ -128,19 +319,25 @@ function ProductCard({ product }: { product: Product }) {
         </div>
       )}
       <div className="p-6 pt-3">
-        <h3 className="font-semibold text-blue-950 mb-2 group-hover:text-blue-700 transition-colors">
+        <h3
+          className="font-semibold text-blue-950 mb-2 group-hover:text-blue-700 transition-colors cursor-pointer"
+          onClick={onQuickView}
+        >
           {product.title}
         </h3>
         <p className="text-sm text-blue-800/55 leading-relaxed mb-4">{product.description}</p>
-        <a href="#contacto" className="inline-flex items-center gap-2 text-xs text-blue-600 hover:text-blue-800 transition-colors tracking-wide">
-          Solicitar informacion <span className="text-base leading-none">→</span>
-        </a>
+        <button
+          onClick={onQuickView}
+          className="inline-flex items-center gap-2 text-xs text-blue-600 hover:text-blue-800 transition-colors tracking-wide"
+        >
+          Ver producto <span className="text-base leading-none">→</span>
+        </button>
       </div>
     </>
   )
 }
 
-function MobileProductCard({ product }: { product: Product }) {
+function MobileProductCard({ product, onQuickView }: { product: Product; onQuickView: () => void }) {
   const [activeImg, setActiveImg] = useState(0)
   const hasGallery = product.images.length > 1
 
@@ -149,7 +346,7 @@ function MobileProductCard({ product }: { product: Product }) {
       className="group rounded-2xl overflow-hidden border border-blue-100 bg-white shadow-sm flex-shrink-0 snap-start"
       style={{ width: '72vw' }}
     >
-      <div className="relative bg-blue-50" style={{ height: '44vw' }}>
+      <div className="relative bg-blue-50 cursor-pointer" style={{ height: '44vw' }} onClick={onQuickView}>
         <Image
           src={product.images[activeImg]}
           alt={product.title}
@@ -180,15 +377,17 @@ function MobileProductCard({ product }: { product: Product }) {
       <div className="p-4 pt-2">
         <h3 className="font-semibold text-blue-950 mb-1 text-sm">{product.title}</h3>
         <p className="text-xs text-blue-800/55 leading-relaxed mb-3">{product.description}</p>
-        <a href="#contacto" className="inline-flex items-center gap-1 text-xs text-blue-600 tracking-wide">
-          Solicitar informacion <span>→</span>
-        </a>
+        <button onClick={onQuickView} className="inline-flex items-center gap-1 text-xs text-blue-600 tracking-wide">
+          Ver producto <span>→</span>
+        </button>
       </div>
     </article>
   )
 }
 
 export function ProductsSection() {
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null)
+
   return (
     <section id="productos" className="py-28 px-6 bg-blue-50/40">
       <div className="max-w-7xl mx-auto">
@@ -219,7 +418,7 @@ export function ProductsSection() {
             style={{ scrollbarWidth: 'none' }}
           >
             {products.map((product) => (
-              <MobileProductCard key={product.title} product={product} />
+              <MobileProductCard key={product.title} product={product} onQuickView={() => setQuickViewProduct(product)} />
             ))}
           </div>
           <div className="flex justify-center gap-1.5 mt-2">
@@ -243,7 +442,7 @@ export function ProductsSection() {
               variants={cardVariants}
               className="group rounded-2xl overflow-hidden border border-blue-100 hover:border-blue-300 bg-white transition-all duration-300 shadow-sm hover:shadow-md hover:shadow-blue-100"
             >
-              <ProductCard product={product} />
+              <ProductCard product={product} onQuickView={() => setQuickViewProduct(product)} />
             </motion.article>
           ))}
         </motion.div>
@@ -267,6 +466,13 @@ export function ProductsSection() {
           </a>
         </motion.div>
       </div>
+
+      {/* Quick View Modal */}
+      <AnimatePresence>
+        {quickViewProduct && (
+          <QuickView product={quickViewProduct} onClose={() => setQuickViewProduct(null)} />
+        )}
+      </AnimatePresence>
     </section>
   )
 }
