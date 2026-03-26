@@ -2,81 +2,25 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useState, useEffect, useCallback } from 'react'
+import { products as allProducts } from '@/lib/products'
 
 interface Product {
   title: string
   description: string
   images: string[]
   tag: string
+  slug: string
 }
 
-const products: Product[] = [
-  {
-    title: 'Canulas de Liposuccion',
-    description: 'Sistema de canulas disenadas para liposuccion de alta precision. Disponibles en multiples calibres y longitudes.',
-    images: [
-      '/images/products/canulas-1.png',
-      '/images/products/canulas-2.png',
-      '/images/products/canulas-3.png',
-      '/images/products/canulas-4.png',
-      '/images/products/canulas-5.png',
-      '/images/products/canulas-6.png',
-    ],
-    tag: 'Best Seller',
-  },
-  {
-    title: 'Kit Mamoplastia',
-    description: 'Set completo de instrumentos para cirugia de aumento y reduccion mamaria, con acabados de alta resistencia.',
-    images: [
-      '/images/products/kit-mamoplastia/1.png',
-      '/images/products/kit-mamoplastia/2.png',
-      '/images/products/kit-mamoplastia/3.png',
-      '/images/products/kit-mamoplastia/4.png',
-    ],
-    tag: 'Kit Completo',
-  },
-  {
-    title: 'Kit Abdominoplastia',
-    description: 'Instrumental especializado para procedimientos de abdominoplastia con ergonomia optimizada.',
-    images: [
-      '/images/products/kit-abdominoplastia/1.png',
-      '/images/products/kit-abdominoplastia/2.png',
-    ],
-    tag: 'Kit Completo',
-  },
-  {
-    title: 'Kit Rinoplastia',
-    description: 'Kit completo de instrumentos para rinoplastia con pinzas, cinceles y especulos de alta precision.',
-    images: [
-      '/images/products/kit-rinoplastia/1.png',
-      '/images/products/kit-rinoplastia/2.png',
-      '/images/products/kit-rinoplastia/3.png',
-    ],
-    tag: 'Kit Completo',
-  },
-  {
-    title: 'Kit Blefaroplastia',
-    description: 'Instrumental completo para cirugia de parpados con tijeras, pinzas y portaagujas de microcirugia.',
-    images: [
-      '/images/products/kit-blefaroplastia/1.png',
-      '/images/products/kit-blefaroplastia/2.png',
-      '/images/products/kit-blefaroplastia/3.png',
-      '/images/products/kit-blefaroplastia/4.png',
-    ],
-    tag: 'Kit Completo',
-  },
-  {
-    title: 'Equipo de Liposuccion',
-    description: 'Maquina y accesorios para procedimientos de liposuccion asistida, con tecnologia nacional de vanguardia.',
-    images: [
-      '/images/products/equipo-lipo/1.png',
-      '/images/products/equipo-lipo/2.png',
-      '/images/products/equipo-lipo/3.png',
-    ],
-    tag: 'Equipo',
-  },
-]
+const products: Product[] = allProducts.slice(0, 6).map((p) => ({
+  title: p.title,
+  description: p.description,
+  images: p.images,
+  tag: p.tag,
+  slug: p.slug,
+}))
 
 const containerVariants = {
   hidden: {},
@@ -456,14 +400,22 @@ export function ProductsSection() {
           className="text-center mt-12"
         >
           <p className="text-blue-800/50 text-sm mb-4">
-            No encuentras lo que necesitas? Fabricamos a medida.
+            Estos son solo algunos de nuestros +1000 productos. Fabricamos a medida.
           </p>
-          <a
-            href="#contacto"
-            className="inline-block px-8 py-3 rounded-full border border-blue-600/50 text-blue-700 text-sm hover:bg-blue-700 hover:text-white transition-all duration-200 tracking-wide"
-          >
-            Consultar Catalogo Completo
-          </a>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              href="/productos"
+              className="inline-block px-8 py-3 rounded-full bg-blue-700 text-white text-sm hover:bg-blue-600 transition-all duration-200 tracking-wide shadow-lg shadow-blue-700/20"
+            >
+              Ver Catalogo Completo
+            </Link>
+            <a
+              href="#contacto"
+              className="inline-block px-8 py-3 rounded-full border border-blue-600/50 text-blue-700 text-sm hover:bg-blue-700 hover:text-white transition-all duration-200 tracking-wide"
+            >
+              Solicitar Cotizacion
+            </a>
+          </div>
         </motion.div>
       </div>
 
