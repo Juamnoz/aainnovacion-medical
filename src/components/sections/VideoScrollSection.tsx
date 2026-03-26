@@ -77,7 +77,7 @@ export function VideoScrollSection() {
       <div className="sticky top-0 h-screen overflow-hidden">
         <video
           ref={videoRef}
-          src="/video.mp4"
+          src="/video-despiece-canula.mp4"
           playsInline
           autoPlay
           muted
