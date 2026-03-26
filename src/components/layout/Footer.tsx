@@ -48,6 +48,11 @@ export function Footer() {
               <li>Medellín, Antioquia</li>
               <li>Colombia</li>
               <li className="pt-1">
+                <a href="tel:+573145115573" className="hover:text-white transition-colors">
+                  +57 314 511 5573
+                </a>
+              </li>
+              <li>
                 <a href="tel:+573015249497" className="hover:text-white transition-colors">
                   +57 301 524 9497
                 </a>

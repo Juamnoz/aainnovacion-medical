@@ -252,7 +252,7 @@ function QuickView({ product, onClose }: { product: Product; onClose: () => void
               Solicitar Cotizacion
             </a>
             <a
-              href="https://wa.me/573001234567"
+              href="https://wa.me/573015249497?text=Hola%2C%20me%20interesa%20conocer%20sus%20productos%20quir%C3%BArgicos"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-blue-200 text-blue-700 text-sm hover:bg-blue-50 transition-colors tracking-wide"

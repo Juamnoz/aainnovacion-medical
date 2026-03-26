@@ -13,6 +13,13 @@ const contactItems = [
   {
     icon: Phone,
     label: 'Teléfono',
+    value: '+57 314 511 5573',
+    sub: 'Lunes a viernes, 8am – 6pm',
+    href: 'tel:+573145115573',
+  },
+  {
+    icon: Phone,
+    label: 'Teléfono 2',
     value: '+57 301 524 9497',
     sub: 'Lunes a viernes, 8am – 6pm',
     href: 'tel:+573015249497',

@@ -6,6 +6,7 @@ import { AboutSection } from '@/components/sections/AboutSection'
 import { ProductsSection } from '@/components/sections/ProductsSection'
 import { AudienceSection } from '@/components/sections/AudienceSection'
 import { ContactSection } from '@/components/sections/ContactSection'
+import { WhatsAppButton } from '@/components/layout/WhatsAppButton'
 
 export default function Home() {
   return (
@@ -24,6 +25,7 @@ export default function Home() {
         <ContactSection />
       </main>
       <Footer />
+      <WhatsAppButton />
     </>
   )
 }
