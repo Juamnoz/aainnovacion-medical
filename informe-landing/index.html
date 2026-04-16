@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Informe Digital · AA Innovación Medical · AIC Studio</title>
+  <style>
+    /* ─── Reset & Base ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue-950: #0a1628;
+      --blue-900: #0f2245;
+      --blue-800: #1a3a6e;
+      --blue-700: #1d4ed8;
+      --blue-600: #2563eb;
+      --blue-400: #60a5fa;
+      --blue-200: #bfdbfe;
+      --green-400: #4ade80;
+      --green-500: #22c55e;
+      --slate-400: #94a3b8;
+      --slate-300: #cbd5e1;
+      --white: #ffffff;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--blue-950);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ─── Scrollbar ─── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--blue-950); }
+    ::-webkit-scrollbar-thumb { background: var(--blue-700); border-radius: 2px; }
+
+    /* ─── Stars bg ─── */
+    #stars {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(37,99,235,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 80% 90%, rgba(37,99,235,0.08) 0%, transparent 60%);
+    }
+
+    /* ─── Grid lines bg ─── */
+    .grid-bg {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.03;
+      background-image:
+        linear-gradient(rgba(96,165,250,1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(96,165,250,1) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* ─── Nav ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 40px;
+      background: rgba(10,22,40,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(96,165,250,0.08);
+    }
+    .nav-logo { font-size: 14px; font-weight: 700; color: var(--blue-400); letter-spacing: 0.1em; text-transform: uppercase; }
+    .nav-badge {
+      font-size: 11px; color: var(--slate-400); letter-spacing: 0.15em; text-transform: uppercase;
+      border: 1px solid rgba(96,165,250,0.15); border-radius: 999px; padding: 4px 12px;
+    }
+
+    /* ─── Sections ─── */
+    section { position: relative; z-index: 1; }
+
+    /* ─── Hero ─── */
+    #hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 120px 24px 80px;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--blue-400); border: 1px solid rgba(96,165,250,0.25);
+      border-radius: 999px; padding: 6px 18px; margin-bottom: 32px;
+      animation: fadeDown 0.8s ease both;
+    }
+    .hero-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue-400); animation: pulse 2s ease infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+    .hero-title {
+      font-size: clamp(42px, 8vw, 96px); font-weight: 800; line-height: 1.0;
+      letter-spacing: -0.03em; margin-bottom: 24px;
+    }
+    .hero-title .line1 { display: block; color: var(--white); animation: fadeUp 0.8s 0.1s ease both; }
+    .hero-title .grad {
+      display: block;
+      background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #34d399 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeUp 0.8s 0.25s ease both;
+    }
+    .hero-title .line3 { display: block; color: var(--white); animation: fadeUp 0.8s 0.4s ease both; }
+
+    .hero-sub {
+      font-size: clamp(15px, 2vw, 18px); color: var(--slate-400); max-width: 560px;
+      line-height: 1.65; margin-bottom: 48px;
+      animation: fadeUp 0.8s 0.55s ease both;
+    }
+    .hero-pills {
+      display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+      animation: fadeUp 0.8s 0.7s ease both;
+    }
+    .pill {
+      font-size: 12px; letter-spacing: 0.05em;
+      border: 1px solid rgba(96,165,250,0.2); border-radius: 999px;
+      padding: 6px 16px; color: var(--blue-200);
+      background: rgba(29,78,216,0.08);
+      transition: all 0.2s;
+    }
+    .pill:hover { border-color: var(--blue-400); background: rgba(29,78,216,0.2); }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      color: var(--slate-400); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      animation: fadeUp 1s 1.2s ease both;
+    }
+    .scroll-line {
+      width: 1px; height: 40px; background: linear-gradient(to bottom, var(--blue-400), transparent);
+      animation: scrollLine 1.5s ease infinite;
+    }
+    @keyframes scrollLine { 0%{transform:scaleY(0);transform-origin:top} 50%{transform:scaleY(1);transform-origin:top} 51%{transform:scaleY(1);transform-origin:bottom} 100%{transform:scaleY(0);transform-origin:bottom} }
+
+    /* ─── Animations ─── */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-left { opacity: 0; transform: translateX(-32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .reveal-right { opacity: 0; transform: translateX(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+    /* ─── Section Labels ─── */
+    .section-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--blue-400); margin-bottom: 14px;
+    }
+    .section-label::before { content: ''; display: block; width: 24px; height: 1px; background: var(--blue-400); }
+
+    /* ─── Metric Grid ─── */
+    #metrics { padding: 80px 24px; }
+    .metrics-inner { max-width: 1100px; margin: 0 auto; }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px; margin-top: 48px;
+    }
+    .metric-card {
+      position: relative; overflow: hidden;
+      border: 1px solid rgba(96,165,250,0.12);
+      border-radius: 16px;
+      padding: 28px 24px;
+      background: rgba(255,255,255,0.025);
+      backdrop-filter: blur(6px);
+      transition: all 0.3s ease;
+    }
+    .metric-card::before {
+      content: ''; position: absolute; inset: 0; border-radius: inherit;
+      background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(96,165,250,0.06), transparent);
+      pointer-events: none;
+    }
+    .metric-card:hover { border-color: rgba(96,165,250,0.3); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    .metric-icon { font-size: 24px; margin-bottom: 12px; }
+    .metric-number {
+      font-size: clamp(36px, 5vw, 52px); font-weight: 800;
+      line-height: 1; letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 0%, #60a5fa 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .metric-suffix { font-size: 24px; font-weight: 700; }
+    .metric-label { font-size: 12px; color: var(--slate-400); margin-top: 6px; letter-spacing: 0.05em; line-height: 1.4; }
+    .metric-bar { height: 2px; background: rgba(96,165,250,0.1); border-radius: 1px; margin-top: 16px; overflow: hidden; }
+    .metric-bar-fill { height: 100%; background: linear-gradient(90deg, var(--blue-600), var(--blue-400)); border-radius: 1px; width: 0; transition: width 1.4s cubic-bezier(0.22,1,0.36,1); }
+
+    /* ─── Web Section ─── */
+    #web { padding: 80px 24px; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-title { font-size: clamp(28px, 4vw, 44px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .section-desc { color: var(--slate-400); font-size: 15px; max-width: 560px; line-height: 1.65; margin-bottom: 48px; }
+
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .feature-card {
+      border: 1px solid rgba(96,165,250,0.1); border-radius: 14px;
+      padding: 22px 20px; background: rgba(255,255,255,0.02);
+      transition: all 0.25s ease;
+    }
+    .feature-card:hover { border-color: rgba(96,165,250,0.25); background: rgba(29,78,216,0.06); }
+    .feature-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .feature-icon { font-size: 20px; }
+    .feature-title { font-size: 14px; font-weight: 600; color: var(--white); }
+    .feature-body { font-size: 13px; color: var(--slate-400); line-height: 1.6; }
+    .feature-tag {
+      display: inline-block; margin-top: 10px;
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--blue-400); border: 1px solid rgba(96,165,250,0.2);
+      border-radius: 999px; padding: 2px 10px;
+    }
+
+    /* Product pills strip */
+    .products-strip {
+      margin-top: 40px; padding: 24px;
+      border: 1px solid rgba(96,165,250,0.1); border-radius: 16px;
+      background: rgba(255,255,255,0.015);
+    }
+    .products-strip-title { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--blue-400); margin-bottom: 16px; }
+    .products-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .prod-pill {
+      font-size: 11px; color: var(--slate-300);
+      border: 1px solid rgba(148,163,184,0.15); border-radius: 999px;
+      padding: 4px 12px; background: rgba(255,255,255,0.02);
+      transition: all 0.2s;
+    }
+    .prod-pill:hover { border-color: var(--blue-400); color: var(--blue-200); }
+
+    /* ─── SEO Section ─── */
+    #seo { padding: 80px 24px; }
+    .seo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+    @media(max-width:768px){ .seo-grid{grid-template-columns:1fr;} }
+
+    .seo-block { }
+    .seo-item {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(96,165,250,0.06);
+    }
+    .seo-item:last-child { border-bottom: none; }
+    .seo-item-icon {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; background: rgba(29,78,216,0.15);
+      border: 1px solid rgba(96,165,250,0.15);
+    }
+    .seo-item-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+    .seo-item-desc { font-size: 12px; color: var(--slate-400); line-height: 1.55; }
+
+    /* JSON-LD visualization */
+    .jsonld-box {
+      border: 1px solid rgba(96,165,250,0.15); border-radius: 14px;
+      background: rgba(0,0,0,0.3); padding: 20px; font-family: 'Courier New', monospace; font-size: 12px;
+      line-height: 1.7; overflow-x: auto;
+    }
+    .jk { color: #60a5fa; }
+    .jv { color: #34d399; }
+    .jp { color: #a78bfa; }
+    .js { color: #94a3b8; }
+
+    /* Keywords */
+    .keywords-cloud { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .kw {
+      font-size: 12px; border-radius: 999px; padding: 5px 14px;
+      border: 1px solid; transition: all 0.2s;
+    }
+    .kw-1 { border-color: rgba(29,78,216,0.4); color: #93c5fd; background: rgba(29,78,216,0.1); }
+    .kw-2 { border-color: rgba(124,58,237,0.4); color: #c4b5fd; background: rgba(124,58,237,0.1); }
+    .kw-3 { border-color: rgba(5,150,105,0.4); color: #6ee7b7; background: rgba(5,150,105,0.1); }
+    .kw:hover { transform: scale(1.05); }
+
+    /* ─── GMB Section ─── */
+    #gmb { padding: 80px 24px; }
+    .gmb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    @media(max-width:768px){ .gmb-grid{grid-template-columns:1fr;} }
+
+    .checklist { display: flex; flex-direction: column; gap: 10px; }
+    .check-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; border-radius: 10px;
+      border: 1px solid rgba(96,165,250,0.08);
+      background: rgba(255,255,255,0.015);
+      opacity: 0; transform: translateX(-20px);
+      transition: opacity 0.4s ease, transform 0.4s ease, border-color 0.2s, background 0.2s;
+    }
+    .check-item.checked { border-color: rgba(34,197,94,0.2); background: rgba(34,197,94,0.04); }
+    .check-item.pending { border-color: rgba(245,158,11,0.2); background: rgba(245,158,11,0.04); }
+    .check-item:hover { border-color: rgba(96,165,250,0.2); }
+    .check-icon { font-size: 16px; flex-shrink: 0; }
+    .check-text { font-size: 13px; line-height: 1.4; }
+    .check-text strong { display: block; color: var(--white); font-weight: 500; }
+    .check-text span { color: var(--slate-400); font-size: 11px; }
+
+    /* ─── Timeline ─── */
+    #timeline { padding: 80px 24px; }
+    .timeline-list { position: relative; max-width: 700px; margin: 48px auto 0; }
+    .timeline-list::before {
+      content: ''; position: absolute; left: 19px; top: 0; bottom: 0; width: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(96,165,250,0.3), transparent);
+    }
+    .tl-item {
+      display: flex; gap: 24px; margin-bottom: 32px;
+      opacity: 0; transform: translateX(-24px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .tl-item.visible { opacity: 1; transform: translateX(0); }
+    .tl-dot {
+      width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+      background: rgba(29,78,216,0.15); border: 1px solid rgba(96,165,250,0.3);
+      position: relative; z-index: 1;
+    }
+    .tl-dot.done { background: rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.4); }
+    .tl-content { flex: 1; padding-top: 6px; }
+    .tl-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .tl-desc { font-size: 13px; color: var(--slate-400); line-height: 1.6; }
+    .tl-tag {
+      display: inline-block; margin-top: 8px;
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      border-radius: 999px; padding: 2px 10px; border: 1px solid;
+    }
+    .tl-tag.done { color: var(--green-400); border-color: rgba(74,222,128,0.3); background: rgba(34,197,94,0.06); }
+    .tl-tag.pending { color: #fbbf24; border-color: rgba(251,191,36,0.3); background: rgba(245,158,11,0.06); }
+
+    /* ─── Progress bars ─── */
+    #progress { padding: 80px 24px; }
+    .progress-list { max-width: 700px; margin: 40px auto 0; display: flex; flex-direction: column; gap: 24px; }
+    .progress-item { }
+    .progress-head { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    .progress-label { font-size: 13px; font-weight: 500; }
+    .progress-pct { font-size: 13px; color: var(--blue-400); font-weight: 700; }
+    .progress-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+    .progress-fill {
+      height: 100%; border-radius: 3px; width: 0;
+      transition: width 1.4s cubic-bezier(0.22,1,0.36,1);
+    }
+    .progress-fill.blue { background: linear-gradient(90deg, #1d4ed8, #60a5fa); }
+    .progress-fill.green { background: linear-gradient(90deg, #059669, #34d399); }
+    .progress-fill.purple { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+    .progress-sublabel { font-size: 11px; color: var(--slate-400); margin-top: 4px; }
+
+    /* ─── CTA ─── */
+    #cta { padding: 100px 24px; text-align: center; }
+    .cta-box {
+      max-width: 680px; margin: 0 auto;
+      border: 1px solid rgba(96,165,250,0.15); border-radius: 24px;
+      padding: 64px 40px;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(29,78,216,0.12), transparent);
+    }
+    .cta-title { font-size: clamp(28px, 4vw, 42px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .cta-sub { font-size: 15px; color: var(--slate-400); margin-bottom: 40px; line-height: 1.6; }
+    .cta-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--blue-600); color: white; font-size: 14px; font-weight: 600;
+      border: none; border-radius: 999px; padding: 14px 28px; cursor: pointer;
+      text-decoration: none; transition: all 0.2s;
+      box-shadow: 0 0 32px rgba(37,99,235,0.3);
+    }
+    .btn-primary:hover { background: var(--blue-700); box-shadow: 0 0 48px rgba(37,99,235,0.5); transform: translateY(-2px); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--blue-200); font-size: 14px;
+      border: 1px solid rgba(96,165,250,0.25); border-radius: 999px; padding: 14px 28px;
+      cursor: pointer; text-decoration: none; transition: all 0.2s;
+    }
+    .btn-secondary:hover { border-color: rgba(96,165,250,0.5); background: rgba(29,78,216,0.08); }
+
+    /* ─── Footer ─── */
+    footer {
+      border-top: 1px solid rgba(96,165,250,0.08); padding: 28px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-brand { font-size: 12px; color: var(--slate-400); }
+    .footer-brand span { color: var(--blue-400); font-weight: 600; }
+    .footer-date { font-size: 11px; color: rgba(148,163,184,0.5); }
+
+    /* ─── Divider ─── */
+    .hr { height: 1px; background: linear-gradient(90deg, transparent, rgba(96,165,250,0.12), transparent); margin: 0 24px; }
+
+    /* ─── Responsive ─── */
+    @media(max-width:600px) {
+      nav { padding: 14px 20px; }
+      .cta-box { padding: 40px 24px; }
+    }
+
+    /* ─── Glow orbs ─── */
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0;
+      animation: orb-float 8s ease-in-out infinite;
+    }
+    .orb-1 { width: 600px; height: 600px; background: rgba(29,78,216,0.08); top: -200px; left: -200px; }
+    .orb-2 { width: 500px; height: 500px; background: rgba(124,58,237,0.05); bottom: -150px; right: -150px; animation-delay: -4s; }
+    @keyframes orb-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-30px)} }
+
+    /* ─── Number flip animation ─── */
+    .num-wrap { display: inline-block; overflow: hidden; vertical-align: bottom; }
+  </style>
+</head>
+<body>
+
+<div id="stars"></div>
+<div class="grid-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">AIC Studio</div>
+  <div class="nav-badge">AA Innovación Medical · Abril 2026</div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-eyebrow">
+    <span class="hero-dot"></span>
+    Informe Completo de Presencia Digital
+  </div>
+  <h1 class="hero-title">
+    <span class="line1">Presencia digital</span>
+    <span class="grad">construida desde cero</span>
+    <span class="line3">para AA Innovación Medical</span>
+  </h1>
+  <p class="hero-sub">
+    Sitio web profesional · SEO técnico avanzado · Google My Business —
+    todo implementado por AIC Studio para posicionar la marca en Colombia y Latinoamérica.
+  </p>
+  <div class="hero-pills">
+    <span class="pill">Next.js · TypeScript</span>
+    <span class="pill">Vercel CDN</span>
+    <span class="pill">Schema.org JSON-LD</span>
+    <span class="pill">22 páginas indexadas</span>
+    <span class="pill">innovacionmedical.com</span>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- METRICS -->
+<section id="metrics">
+  <div class="metrics-inner">
+    <div class="section-label reveal">Métricas del Proyecto</div>
+    <h2 class="section-title reveal">Todo lo que se construyó</h2>
+    <p class="section-desc reveal">Números reales del trabajo realizado — sin humo, sin exageraciones.</p>
+
+    <div class="metrics-grid">
+      <div class="metric-card reveal" style="transition-delay:0.05s">
+        <div class="metric-icon">🌐</div>
+        <div class="metric-number"><span class="counter" data-target="24">0</span></div>
+        <div class="metric-label">URLs indexadas en Google<br>vía sitemap.xml</div>
+        <div class="metric-bar"><div class="metric-bar-fill" data-pct="96"></div></div>
+      </div>
+      <div class="metric-card reveal" style="transition-delay:0.1s">
+        <div class="metric-icon">📦</div>
+        <div class="metric-number"><span class="counter" data-target="22">0</span></div>
+        <div class="metric-label">Páginas de producto<br>con SEO individual</div>
+        <div class="metric-bar"><div class="metric-bar-fill" data-pct="100"></div></div>
+      </div>
+      <div class="metric-card reveal" style="transition-delay:0.15s">
+        <div class="metric-icon">🔑</div>
+        <div class="metric-number"><span class="counter" data-target="17">0</span></div>
+        <div class="metric-label">Keywords estratégicas<br>implementadas</div>
+        <div class="metric-bar"><div class="metric-bar-fill" data-pct="85"></div></div>
+      </div>
+      <div class="metric-card reveal" style="transition-delay:0.2s">
+        <div class="metric-icon">🧩</div>
+        <div class="metric-number"><span class="counter" data-target="4">0</span></div>
+        <div class="metric-label">Tipos de schema JSON-LD<br>por página</div>
+        <div class="metric-bar"><div class="metric-bar-fill" data-pct="100"></div></div>
+      </div>
+      <div class="metric-card reveal" style="transition-delay:0.25s">
+        <div class="metric-icon">📱</div>
+        <div class="metric-number"><span class="counter" data-target="2">0</span></div>
+        <div class="metric-label">Canales de contacto<br>WhatsApp activos</div>
+        <div class="metric-bar"><div class="metric-bar-fill" data-pct="100"></div></div>
+      </div>
+      <div class="metric-card reveal" style="transition-delay:0.3s">
+        <div class="metric-icon">🎬</div>
+        <div class="metric-number"><span class="counter" data-target="1080">0</span><span class="metric-suffix" style="font-size:18px;color:#60a5fa">p</span></div>
+        <div class="metric-label">Video de despiece<br>de cañula (calidad nativa)</div>
+        <div class="metric-bar"><div class="metric-bar-fill" data-pct="100"></div></div>
+      </div>
+      <div class="metric-card reveal" style="transition-delay:0.35s">
+        <div class="metric-icon">🏆</div>
+        <div class="metric-number"><span class="counter" data-target="100">0</span><span class="metric-suffix">%</span></div>
+        <div class="metric-label">Rastreabilidad Google<br>(index + follow + imágenes)</div>
+        <div class="metric-bar"><div class="metric-bar-fill" data-pct="100"></div></div>
+      </div>
+      <div class="metric-card reveal" style="transition-delay:0.4s">
+        <div class="metric-icon">⚡</div>
+        <div class="metric-number"><span class="counter" data-target="0">0</span><span class="metric-suffix" style="font-size:18px;color:#34d399">ms</span></div>
+        <div class="metric-label">TTFB objetivo — páginas<br>generadas estáticamente (SSG)</div>
+        <div class="metric-bar"><div class="metric-bar-fill" data-pct="100"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- WEB SECTION -->
+<section id="web">
+  <div class="section-inner">
+    <div class="section-label reveal">02 — Sitio Web</div>
+    <h2 class="section-title reveal">www.innovacionmedical.com</h2>
+    <p class="section-desc reveal">
+      Sitio web profesional construido con Next.js y desplegado en Vercel — rápido, seguro y optimizado para conversión.
+    </p>
+
+    <div class="features-grid">
+      <div class="feature-card reveal" style="transition-delay:0.05s">
+        <div class="feature-head">
+          <span class="feature-icon">🏗️</span>
+          <span class="feature-title">Arquitectura Next.js</span>
+        </div>
+        <div class="feature-body">App Router + TypeScript. Generación estática (SSG) para las 22 páginas de producto. Deploy en Vercel con CDN global.</div>
+        <span class="feature-tag">Performance</span>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.1s">
+        <div class="feature-head">
+          <span class="feature-icon">🎥</span>
+          <span class="feature-title">Hero con Video YouTube</span>
+        </div>
+        <div class="feature-body">Video de fondo muted/autoplay con overlay blanco para legibilidad. Animaciones staggered en el texto con Framer Motion.</div>
+        <span class="feature-tag">UX / Branding</span>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.15s">
+        <div class="feature-head">
+          <span class="feature-icon">🔬</span>
+          <span class="feature-title">Video Despiece Cañula</span>
+        </div>
+        <div class="feature-body">Video propio a 1080p del proceso de despiece de cañula. Sección dedicada con experiencia de scroll cinematográfica.</div>
+        <span class="feature-tag">Contenido Propio</span>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.2s">
+        <div class="feature-head">
+          <span class="feature-icon">👁️</span>
+          <span class="feature-title">Quick-View Modal</span>
+        </div>
+        <div class="feature-body">Preview instantáneo de cada producto con Framer Motion. Galería con object-contain para mostrar instrumentos sin recortes.</div>
+        <span class="feature-tag">Conversión</span>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.25s">
+        <div class="feature-head">
+          <span class="feature-icon">💬</span>
+          <span class="feature-title">Botón WhatsApp Flotante</span>
+        </div>
+        <div class="feature-body">Logo oficial SVG de WhatsApp. Aparece 2s tras la carga. Animación spring. Mensaje pre-cargado con nombre del producto en cada página.</div>
+        <span class="feature-tag">Contacto Directo</span>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.3s">
+        <div class="feature-head">
+          <span class="feature-icon">📞</span>
+          <span class="feature-title">Dos Teléfonos de Contacto</span>
+        </div>
+        <div class="feature-body">+57 314 511 5573 y +57 301 524 9497 presentes en navbar, footer, páginas de producto y schema JSON-LD.</div>
+        <span class="feature-tag">Accesibilidad</span>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.35s">
+        <div class="feature-head">
+          <span class="feature-icon">🏅</span>
+          <span class="feature-title">Sello AMWC + INVIMA</span>
+        </div>
+        <div class="feature-body">Reconocimiento del Aesthetic & Anti-Aging Medicine World Congress y certificación BPM documentados en la sección Nosotros y en schema.</div>
+        <span class="feature-tag">Credibilidad</span>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.4s">
+        <div class="feature-head">
+          <span class="feature-icon">📄</span>
+          <span class="feature-title">22 Páginas de Producto</span>
+        </div>
+        <div class="feature-body">Cada producto tiene URL, galería, descripción larga, 4 features (INVIMA, fabricado en Medellín, personalizable, entrega 48h) y CTA WhatsApp.</div>
+        <span class="feature-tag">Catálogo Completo</span>
+      </div>
+    </div>
+
+    <!-- Products strip -->
+    <div class="products-strip reveal">
+      <div class="products-strip-title">Catálogo implementado — 22 productos / 22 URLs únicas</div>
+      <div class="products-pills">
+        <span class="prod-pill">Cánulas de Liposucción</span>
+        <span class="prod-pill">Kit Mamoplastia</span>
+        <span class="prod-pill">Kit Abdominoplastia</span>
+        <span class="prod-pill">Kit Rinoplastia</span>
+        <span class="prod-pill">Kit Blefaroplastia</span>
+        <span class="prod-pill">Equipo de Liposucción</span>
+        <span class="prod-pill">Pinzas Quirúrgicas</span>
+        <span class="prod-pill">Disectores Quirúrgicos</span>
+        <span class="prod-pill">Valvas Quirúrgicas</span>
+        <span class="prod-pill">Espéculos y Grades</span>
+        <span class="prod-pill">Tijeras de Microcirugía</span>
+        <span class="prod-pill">Cinceles Quirúrgicos</span>
+        <span class="prod-pill">Ganchos Quirúrgicos</span>
+        <span class="prod-pill">Kit Implante Capilar</span>
+        <span class="prod-pill">Kit Podología</span>
+        <span class="prod-pill">Cables Bipolares</span>
+        <span class="prod-pill">Puntas de Electrocauterio</span>
+        <span class="prod-pill">Mangos de Bisturí</span>
+        <span class="prod-pill">Kit Ritidoplastia</span>
+        <span class="prod-pill">Raspas Quirúrgicas</span>
+        <span class="prod-pill">Dilatadores Quirúrgicos</span>
+        <span class="prod-pill">Martillos Quirúrgicos</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- SEO SECTION -->
+<section id="seo">
+  <div class="section-inner">
+    <div class="section-label reveal">03 — SEO Técnico</div>
+    <h2 class="section-title reveal">Optimización para Google</h2>
+    <p class="section-desc reveal">
+      SEO técnico completo: metadata, schema, sitemap, robots — todo configurado para que Google entienda, indexe y posicione el sitio.
+    </p>
+
+    <div class="seo-grid">
+      <!-- Left column: items -->
+      <div class="seo-block reveal-left">
+        <div class="seo-item">
+          <div class="seo-item-icon">🗺️</div>
+          <div>
+            <div class="seo-item-title">Sitemap XML dinámico</div>
+            <div class="seo-item-desc">24 URLs + imágenes de todos los productos. Generado automáticamente, siempre actualizado.</div>
+          </div>
+        </div>
+        <div class="seo-item">
+          <div class="seo-item-icon">🤖</div>
+          <div>
+            <div class="seo-item-title">Robots.txt configurado</div>
+            <div class="seo-item-desc">Allow: / · Sitemap declarado · Host definido. Google Googlebot con permisos máximos de rastreo.</div>
+          </div>
+        </div>
+        <div class="seo-item">
+          <div class="seo-item-icon">🔗</div>
+          <div>
+            <div class="seo-item-title">Canonical URLs</div>
+            <div class="seo-item-desc">Cada página tiene su canonical única, evitando contenido duplicado y consolidando autoridad.</div>
+          </div>
+        </div>
+        <div class="seo-item">
+          <div class="seo-item-icon">📱</div>
+          <div>
+            <div class="seo-item-title">Open Graph + Twitter Cards</div>
+            <div class="seo-item-desc">Vista previa enriquecida al compartir en redes. Imagen, título y descripción por página de producto.</div>
+          </div>
+        </div>
+        <div class="seo-item">
+          <div class="seo-item-icon">🖼️</div>
+          <div>
+            <div class="seo-item-title">Image SEO</div>
+            <div class="seo-item-desc">max-image-preview: large · Alt text semántico en todas las imágenes · Imágenes en sitemap.</div>
+          </div>
+        </div>
+        <div class="seo-item">
+          <div class="seo-item-icon">⚡</div>
+          <div>
+            <div class="seo-item-title">Core Web Vitals</div>
+            <div class="seo-item-desc">SSG + Vercel CDN + Next/Image optimizado. LCP, FID y CLS optimizados para Google ranking signals.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: JSON-LD + keywords -->
+      <div class="reveal-right" style="display:flex;flex-direction:column;gap:24px;">
+        <div>
+          <div class="section-label" style="margin-bottom:12px;">Datos Estructurados (JSON-LD)</div>
+          <div class="jsonld-box">
+<span class="js">{</span>
+  <span class="jk">"@type"</span>: [<span class="jv">"MedicalBusiness"</span>, <span class="jv">"LocalBusiness"</span>],
+  <span class="jk">"name"</span>: <span class="jv">"AA Innovacion Medica"</span>,
+  <span class="jk">"address"</span>: {
+    <span class="jk">"addressLocality"</span>: <span class="jv">"Medellin"</span>,
+    <span class="jk">"addressCountry"</span>: <span class="jv">"CO"</span>
+  },
+  <span class="jk">"certification"</span>: [<span class="jv">"INVIMA"</span>, <span class="jv">"BPM"</span>],
+  <span class="jk">"award"</span>: <span class="jv">"AMWC Recognition"</span>
+<span class="js">}</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+            <span style="font-size:11px;border:1px solid rgba(34,197,94,0.3);color:#4ade80;border-radius:999px;padding:3px 10px;background:rgba(34,197,94,0.06);">✓ LocalBusiness</span>
+            <span style="font-size:11px;border:1px solid rgba(34,197,94,0.3);color:#4ade80;border-radius:999px;padding:3px 10px;background:rgba(34,197,94,0.06);">✓ MedicalBusiness</span>
+            <span style="font-size:11px;border:1px solid rgba(34,197,94,0.3);color:#4ade80;border-radius:999px;padding:3px 10px;background:rgba(34,197,94,0.06);">✓ WebSite</span>
+            <span style="font-size:11px;border:1px solid rgba(34,197,94,0.3);color:#4ade80;border-radius:999px;padding:3px 10px;background:rgba(34,197,94,0.06);">✓ Product ×22</span>
+            <span style="font-size:11px;border:1px solid rgba(34,197,94,0.3);color:#4ade80;border-radius:999px;padding:3px 10px;background:rgba(34,197,94,0.06);">✓ BreadcrumbList ×22</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-label" style="margin-bottom:12px;">17 Keywords Estratégicas</div>
+          <div class="keywords-cloud">
+            <span class="kw kw-1">instrumentos quirurgicos</span>
+            <span class="kw kw-1">canulas liposuccion</span>
+            <span class="kw kw-2">cirugia plastica Medellin</span>
+            <span class="kw kw-1">fabricantes Medellin</span>
+            <span class="kw kw-3">kit mamoplastia</span>
+            <span class="kw kw-3">kit abdominoplastia</span>
+            <span class="kw kw-3">kit rinoplastia</span>
+            <span class="kw kw-3">kit blefaroplastia</span>
+            <span class="kw kw-1">equipo liposuccion</span>
+            <span class="kw kw-2">instrumental quirurgico Colombia</span>
+            <span class="kw kw-1">pinzas quirurgicas</span>
+            <span class="kw kw-2">tijeras microcirugia</span>
+            <span class="kw kw-1">instrumental personalizado</span>
+            <span class="kw kw-2">dispositivos medicos Colombia</span>
+            <span class="kw kw-1">fabricante instrumental</span>
+            <span class="kw kw-3">kit implante capilar</span>
+            <span class="kw kw-2">instrumentos cirugia plastica Medellin</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- PROGRESS -->
+<section id="progress">
+  <div class="section-inner" style="max-width:1100px;margin:0 auto;">
+    <div class="section-label reveal">Estado de Implementación</div>
+    <h2 class="section-title reveal">Avance por área</h2>
+    <div class="progress-list">
+      <div class="progress-item reveal">
+        <div class="progress-head">
+          <span class="progress-label">🌐 Sitio Web</span>
+          <span class="progress-pct" data-pct="100">0%</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill blue" data-pct="100"></div></div>
+        <div class="progress-sublabel">22 páginas · video · WhatsApp · contacto · hero · animaciones</div>
+      </div>
+      <div class="progress-item reveal" style="transition-delay:0.1s">
+        <div class="progress-head">
+          <span class="progress-label">🔍 SEO Técnico</span>
+          <span class="progress-pct" data-pct="100">0%</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill blue" data-pct="100"></div></div>
+        <div class="progress-sublabel">Sitemap · robots · JSON-LD · Open Graph · keywords · canonical</div>
+      </div>
+      <div class="progress-item reveal" style="transition-delay:0.2s">
+        <div class="progress-head">
+          <span class="progress-label">📍 Google My Business — Configuración</span>
+          <span class="progress-pct" data-pct="100">0%</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill green" data-pct="100"></div></div>
+        <div class="progress-sublabel">Verificación · logo · info · horarios · teléfonos · fotos</div>
+      </div>
+      <div class="progress-item reveal" style="transition-delay:0.3s">
+        <div class="progress-head">
+          <span class="progress-label">⭐ GMB — Reseñas (acción del cliente)</span>
+          <span class="progress-pct" data-pct="5">0%</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill purple" data-pct="5"></div></div>
+        <div class="progress-sublabel">Meta: 10+ reseñas con promedio 4.5★ — Pendiente del cliente</div>
+      </div>
+      <div class="progress-item reveal" style="transition-delay:0.4s">
+        <div class="progress-head">
+          <span class="progress-label">🔗 Referencias en Directorios (acción del cliente)</span>
+          <span class="progress-pct" data-pct="10">0%</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill purple" data-pct="10"></div></div>
+        <div class="progress-sublabel">INVIMA · Páginas Amarillas · Cámara Comercio Medellín · LinkedIn</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- GMB SECTION -->
+<section id="gmb">
+  <div class="section-inner">
+    <div class="section-label reveal">04 — Google My Business</div>
+    <h2 class="section-title reveal">Perfil verificado y activo</h2>
+    <p class="section-desc reveal">
+      El perfil de Google My Business está operativo y verificado. Las siguientes acciones están completadas — y las pendientes son responsabilidad del cliente.
+    </p>
+
+    <div class="gmb-grid">
+      <!-- Done -->
+      <div class="reveal-left">
+        <div style="font-size:12px;letter-spacing:0.2em;text-transform:uppercase;color:#4ade80;margin-bottom:16px;">✅ Completado por AIC Studio</div>
+        <div class="checklist" id="done-list">
+          <div class="check-item checked">
+            <span class="check-icon">✅</span>
+            <div class="check-text">
+              <strong>Verificación del perfil</strong>
+              <span>Control total sobre Google Maps y búsquedas locales</span>
+            </div>
+          </div>
+          <div class="check-item checked">
+            <span class="check-icon">✅</span>
+            <div class="check-text">
+              <strong>Logo oficial como imagen de perfil</strong>
+              <span>Identidad visual consistente en resultados de Google</span>
+            </div>
+          </div>
+          <div class="check-item checked">
+            <span class="check-icon">✅</span>
+            <div class="check-text">
+              <strong>Información completa del negocio</strong>
+              <span>Nombre, categoría médica, dirección, teléfonos, horarios</span>
+            </div>
+          </div>
+          <div class="check-item checked">
+            <span class="check-icon">✅</span>
+            <div class="check-text">
+              <strong>Fotografías del local</strong>
+              <span>Cargadas directamente por el cliente vía Google</span>
+            </div>
+          </div>
+          <div class="check-item checked">
+            <span class="check-icon">✅</span>
+            <div class="check-text">
+              <strong>Horarios de atención</strong>
+              <span>Lun–Vie 08:00–18:00 · Sáb 08:00–13:00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pending -->
+      <div class="reveal-right">
+        <div style="font-size:12px;letter-spacing:0.2em;text-transform:uppercase;color:#fbbf24;margin-bottom:16px;">⬜ Pendiente — Acción del Cliente</div>
+        <div class="checklist" id="pending-list">
+          <div class="check-item pending">
+            <span class="check-icon">⬜</span>
+            <div class="check-text">
+              <strong>Solicitar reseñas a pacientes</strong>
+              <span>Mínimo 10 reseñas con 4.5★+ para posicionamiento óptimo</span>
+            </div>
+          </div>
+          <div class="check-item pending">
+            <span class="check-icon">⬜</span>
+            <div class="check-text">
+              <strong>Compartir enlace del perfil GMB</strong>
+              <span>Enviarlo por WhatsApp, correo o en consulta directa</span>
+            </div>
+          </div>
+          <div class="check-item pending">
+            <span class="check-icon">⬜</span>
+            <div class="check-text">
+              <strong>Responder todas las reseñas</strong>
+              <span>Positivas y negativas — señal de actividad para Google</span>
+            </div>
+          </div>
+          <div class="check-item pending">
+            <span class="check-icon">⬜</span>
+            <div class="check-text">
+              <strong>Registrarse en directorios locales</strong>
+              <span>INVIMA · Páginas Amarillas · Cámara de Comercio · LinkedIn</span>
+            </div>
+          </div>
+          <div class="check-item pending">
+            <span class="check-icon">⬜</span>
+            <div class="check-text">
+              <strong>Publicaciones mensuales en GMB</strong>
+              <span>2-4 novedades/mes mantienen el perfil activo y visible</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- TIMELINE -->
+<section id="timeline">
+  <div class="section-inner" style="max-width:1100px;margin:0 auto;text-align:center;">
+    <div class="section-label reveal" style="justify-content:center;">05 — Cronología</div>
+    <h2 class="section-title reveal">Lo que se hizo, en orden</h2>
+
+    <div class="timeline-list">
+      <div class="tl-item" id="tl0">
+        <div class="tl-dot done">🏗️</div>
+        <div class="tl-content">
+          <div class="tl-title">Desarrollo del sitio web Next.js</div>
+          <div class="tl-desc">Arquitectura App Router, TypeScript, Tailwind CSS, Framer Motion. Estructura de secciones, navbar, footer y páginas base.</div>
+          <span class="tl-tag done">Completado</span>
+        </div>
+      </div>
+      <div class="tl-item" id="tl1">
+        <div class="tl-dot done">📦</div>
+        <div class="tl-content">
+          <div class="tl-title">22 páginas de producto con SEO individual</div>
+          <div class="tl-desc">Cada producto tiene URL única, galería, longDescription, keywords, JSON-LD Product + BreadcrumbList, Open Graph y CTA WhatsApp personalizado.</div>
+          <span class="tl-tag done">Completado</span>
+        </div>
+      </div>
+      <div class="tl-item" id="tl2">
+        <div class="tl-dot done">🎬</div>
+        <div class="tl-content">
+          <div class="tl-title">Integración video despiece cañula 1080p</div>
+          <div class="tl-desc">Reemplazó el video genérico. Archivo propio video-despiece-canula.mp4 servido localmente para máxima calidad.</div>
+          <span class="tl-tag done">Completado</span>
+        </div>
+      </div>
+      <div class="tl-item" id="tl3">
+        <div class="tl-dot done">💬</div>
+        <div class="tl-content">
+          <div class="tl-title">Botón WhatsApp flotante + segundo teléfono</div>
+          <div class="tl-desc">SVG oficial WhatsApp, animación spring Framer Motion. Dos números activos en todo el sitio.</div>
+          <span class="tl-tag done">Completado</span>
+        </div>
+      </div>
+      <div class="tl-item" id="tl4">
+        <div class="tl-dot done">🔍</div>
+        <div class="tl-content">
+          <div class="tl-title">SEO técnico completo</div>
+          <div class="tl-desc">Sitemap XML, robots.txt, JSON-LD (LocalBusiness + MedicalBusiness + WebSite + Product × 22 + BreadcrumbList × 22), 17 keywords, canonical URLs.</div>
+          <span class="tl-tag done">Completado</span>
+        </div>
+      </div>
+      <div class="tl-item" id="tl5">
+        <div class="tl-dot done">📍</div>
+        <div class="tl-content">
+          <div class="tl-title">Google My Business configurado y verificado</div>
+          <div class="tl-desc">Perfil verificado, logo, info, horarios, teléfonos, categoría médica. Fotografías cargadas por el cliente directamente.</div>
+          <span class="tl-tag done">Completado</span>
+        </div>
+      </div>
+      <div class="tl-item" id="tl6">
+        <div class="tl-dot">⭐</div>
+        <div class="tl-content">
+          <div class="tl-title">Reseñas y referencias (pendiente)</div>
+          <div class="tl-desc">El cliente debe solicitar reseñas a pacientes y registrar el negocio en directorios (INVIMA, Páginas Amarillas, LinkedIn, Cámara de Comercio).</div>
+          <span class="tl-tag pending">Pendiente — Cliente</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-box reveal">
+    <div class="section-label" style="justify-content:center;margin-bottom:16px;">¿Qué sigue?</div>
+    <h2 class="cta-title">Próximos pasos<br><span style="color:var(--blue-400)">para el cliente</span></h2>
+    <p class="cta-sub">
+      La infraestructura digital está lista. El posicionamiento orgánico en Google Maps depende ahora de las reseñas y referencias — acciones que solo puede hacer el cliente.
+    </p>
+    <div style="text-align:left;max-width:480px;margin:0 auto 32px;display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;align-items:flex-start;gap:12px;font-size:13px;color:var(--slate-300);">
+        <span style="color:#fbbf24;font-size:16px;flex-shrink:0;">1.</span>
+        <span><strong style="color:white;">Esta semana:</strong> Identificar 10 pacientes satisfechos y enviarles el enlace del perfil GMB para dejar reseña.</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;font-size:13px;color:var(--slate-300);">
+        <span style="color:#fbbf24;font-size:16px;flex-shrink:0;">2.</span>
+        <span><strong style="color:white;">Este mes:</strong> Alcanzar 10 reseñas 4.5★+. Registrar el negocio en Páginas Amarillas y verificar INVIMA.</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;font-size:13px;color:var(--slate-300);">
+        <span style="color:#fbbf24;font-size:16px;flex-shrink:0;">3.</span>
+        <span><strong style="color:white;">Este trimestre:</strong> 25+ reseñas, LinkedIn empresa activo, publicaciones mensuales en GMB, análisis de métricas con AIC Studio.</span>
+      </div>
+    </div>
+    <div class="cta-actions">
+      <a href="https://www.innovacionmedical.com" target="_blank" class="btn-primary">
+        🌐 Ver el Sitio Web
+      </a>
+      <a href="https://wa.me/573015249497" target="_blank" class="btn-secondary">
+        💬 Contactar AIC Studio
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <span>AIC Studio</span> · Soluciones de Automatización e Inteligencia Artificial ·
+    <a href="mailto:lisaaicstudio@gmail.com" style="color:var(--blue-400);text-decoration:none;">lisaaicstudio@gmail.com</a>
+  </div>
+  <div class="footer-date">Informe — 16 de abril de 2026</div>
+</footer>
+
+<script>
+// ─── Intersection Observer for reveal animations ───
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => io.observe(el));
+
+// ─── Counter animation ───
+function animateCounter(el, target, duration = 1600) {
+  const start = performance.now();
+  const startVal = 0;
+  const isZero = target === 0;
+  function step(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    const current = isZero ? 0 : Math.round(startVal + (target - startVal) * ease);
+    el.textContent = current.toLocaleString('es');
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+const counterObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const target = parseInt(e.target.dataset.target);
+      animateCounter(e.target, target);
+      counterObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('.counter').forEach(el => counterObs.observe(el));
+
+// ─── Progress bars ───
+const barObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const pct = e.target.dataset.pct;
+      e.target.style.width = pct + '%';
+      // Animate percentage text
+      const pctEl = e.target.closest('.progress-item')?.querySelector('.progress-pct');
+      if (pctEl) {
+        const tgt = parseInt(pct);
+        const start = performance.now();
+        (function step(now) {
+          const prog = Math.min((now - start) / 1400, 1);
+          const ease = 1 - Math.pow(1 - prog, 3);
+          pctEl.textContent = Math.round(tgt * ease) + '%';
+          if (prog < 1) requestAnimationFrame(step);
+        })(performance.now());
+      }
+      barObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.progress-fill, .metric-bar-fill').forEach(el => barObs.observe(el));
+
+// ─── Check items stagger ───
+function animateChecklist(listId, delay = 80) {
+  const listObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const items = e.target.querySelectorAll('.check-item');
+        items.forEach((item, i) => {
+          setTimeout(() => {
+            item.style.opacity = '1';
+            item.style.transform = 'translateX(0)';
+          }, i * delay);
+        });
+        listObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  const list = document.getElementById(listId);
+  if (list) listObs.observe(list);
+}
+animateChecklist('done-list');
+animateChecklist('pending-list');
+
+// ─── Timeline items stagger ───
+const tlObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      tlObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.2 });
+
+document.querySelectorAll('.tl-item').forEach((el, i) => {
+  el.style.transitionDelay = (i * 0.1) + 's';
+  tlObs.observe(el);
+});
+
+// ─── Stagger reveal cards ───
+document.querySelectorAll('.feature-card').forEach((card, i) => {
+  card.style.transitionDelay = (i * 0.06) + 's';
+});
+document.querySelectorAll('.metric-card').forEach((card, i) => {
+  card.style.transitionDelay = (i * 0.07) + 's';
+});
+</script>
+
+</body>
+</html>
